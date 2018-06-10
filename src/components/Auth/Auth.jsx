@@ -31,6 +31,7 @@ const styles = theme => ({
 	},
 	content: {
 		padding: 15,
+		outline: 'none',
 	},
 	signup: {
 	}
@@ -74,14 +75,15 @@ class Auth extends Component {
 
 	render() {
 		const {classes, isAuth, logout, firstName, lastName} = this.props;
-		const menuOpen = Boolean(this.state.authMenuAnchorEl);
+		const authMenuOpen = Boolean(this.state.authMenuAnchorEl);
+		const accountMenuOpen = Boolean(this.state.accountMenuAnchorEl);
 		return (
 				isAuth ?
 					(
 						<div>
 							<IconButton
 								color="inherit"
-								aria-owns={menuOpen ? 'menu-appbar-account' : null}
+								aria-owns={accountMenuOpen ? 'menu-appbar-account' : null}
 								aria-haspopup="true"
 								onClick={this.handleMenu('accountMenuAnchorEl')}
 							>
@@ -89,7 +91,7 @@ class Auth extends Component {
 							</IconButton>
 							<Menu
 								id="menu-appbar-account"
-								open={menuOpen}
+								open={accountMenuOpen}
 								anchorEl={this.state.accountMenuAnchorEl}
 								anchorOrigin={{
 									vertical: 'bottom',
@@ -106,6 +108,12 @@ class Auth extends Component {
 									<Typography variant="title">Добро пожаловать, {firstName} {lastName}!</Typography>
 									<Button
 										color="secondary"
+										onClick={() => console.log('settings')}
+									>
+										Настройки
+									</Button>
+									<Button
+										color="secondary"
 										onClick={logout}
 									>
 										Выйти
@@ -119,7 +127,7 @@ class Auth extends Component {
 						<div>
 							<Button
 								color="inherit"
-								aria-owns={menuOpen ? 'menu-appbar-auth' : null}
+								aria-owns={authMenuOpen ? 'menu-appbar-auth' : null}
 								aria-haspopup="true"
 								onClick={this.handleMenu('authMenuAnchorEl')}
 							>
@@ -127,7 +135,7 @@ class Auth extends Component {
 							</Button>
 							<Menu
 								id="menu-appbar-auth"
-								open={menuOpen}
+								open={authMenuOpen}
 								anchorEl={this.state.authMenuAnchorEl}
 								anchorOrigin={{
 									vertical: 'bottom',

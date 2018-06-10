@@ -4,6 +4,8 @@ import MaskedInput from 'react-text-mask'
 
 import { withStyles } from '@material-ui/core/styles'
 
+import serverRequest from '../../helpers/serverRequest'
+
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
@@ -42,7 +44,7 @@ const phoneInput = props => {
 	);
 };
 
-class SignUp extends Component {
+class NewPatient extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -51,13 +53,11 @@ class SignUp extends Component {
 			patronymic: '',
 			dateOfBirth: '',
 			gender: 'male',
-			hospitalId: '',
 			email: '',
 			password: '',
 			description: '',
 			phone: '+38(  )   -  -  ',
 		};
-
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSignUp = this.handleSignUp.bind(this);
 	}
@@ -76,24 +76,37 @@ class SignUp extends Component {
 			email: this.state.email,
 			password: this.state.password,
 			phone: this.state.phone,
-			hospital: this.state.hospitalId,
 			description: this.state.description,
 			dateOfBirth: this.state.dateOfBirth,
 			gender: this.state.gender,
+			doctorId: this.props.doctorId
 		};
-		this.props.signUp(credentials);
-	}
-
-	componentDidMount() {
-		this.props.fetchHospitals()
+		const queryString = `
+			mutation {
+				newPatient(
+					firstName: "${credentials.firstName}",
+					lastName: "${credentials.lastName}",
+					patronymic: "${credentials.patronymic}",
+					email: "${credentials.email}",
+					password: "${credentials.password}",
+					phone: "${credentials.phone}",
+					doctorId: "${credentials.doctorId}",
+					${credentials.description && `description: "${credentials.description}"`}
+					${credentials.dateOfBirth && `dateOfBirth: "${credentials.dateOfBirth}"`}
+					${credentials.gender && `gender: "${credentials.gender}"`}
+				) { firstName}
+			}
+		`;
+		serverRequest('mutation', queryString).then(res => console.log(res));
+		console.log(queryString);
 	}
 
 	render() {
-		const { classes, isFetch, hospitals } = this.props;
-		return(
-			isFetch ? <CircularProgress/> :
+		const {classes, isAuth} = this.props;
+		return (
+			isAuth ? (
 			<div className={classes.root}>
-				<Typography variant="headline" align="center">Регистрация нового доктора</Typography>
+				<Typography variant="headline" align="center">Регистрация нового пациента</Typography>
 				<form className={classes.form}>
 					<TextField
 						required
@@ -137,23 +150,6 @@ class SignUp extends Component {
 						onChange={this.handleChange('password')}
 						margin="normal"
 					/>
-					<FormControl className={classes.formControl} required>
-						<InputLabel htmlFor="age-simple">Лечебное заведение</InputLabel>
-						<Select
-							value={this.state.hospitalId}
-							onChange={this.handleChange('hospitalId')}
-							inputProps={{
-								name: 'hospital-dd',
-								id: 'hospital',
-							}}
-							className={classes.textField}
-						>
-							<MenuItem value="">
-								<em>-----</em>
-							</MenuItem>
-							{hospitals.map(hospital => <MenuItem key={hospital._id} value={hospital._id}>{hospital.title}</MenuItem>)}
-						</Select>
-					</FormControl>
 					<FormControl className={classes.formControl} margin="normal" required>
 						<InputLabel htmlFor="formatted-text-mask-input">Номер телефона</InputLabel>
 						<Input
@@ -192,7 +188,13 @@ class SignUp extends Component {
 				</form>
 			</div>
 		)
+			:
+				<div className={classes.root}>
+					<Typography variant="headline" align="center">Регистрация нового пациента</Typography>
+					<Typography variant="subheading" color="primary">Уважаемый доктор, вы не вошли в систему! Просим сделать это прямо сейчас на верхней навигационной панели.</Typography>
+				</div>
+		)
 	}
 }
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(NewPatient)

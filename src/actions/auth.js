@@ -12,14 +12,28 @@ export const login = (email, password) => dispatch => {
 	      firstName
 	      lastName
 	      patronymic
+	      email
+	      phoneNumbers
+	      patients {
+	        _id
+	        firstName
+	        lastName
+	        patronymic
+	        dateOfBirth
+	        email
+	        phoneNumbers
+	        gender
+	        description
+	      }
 	    }
   }
   `;
 	serverRequest('query', queryString)
 		.then(res => {
+			const normalized = res.authenticateDoctor;
 			dispatch({
 				type: auth.AUTH_SUCCESS,
-				payload: res.authenticateDoctor
+				payload: normalized
 			})
 		})
 		.catch(err => {

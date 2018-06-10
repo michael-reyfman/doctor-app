@@ -4,14 +4,16 @@ import './App.css';
 import {Route} from 'react-router';
 
 import Appbar from './components/Appbar/Appbar';
-import Main from './components/Main/Main';
-import SignUp from "./components/SignUp";
+import Main from './components/Main';
+import SignUp from './components/SignUp';
+import NewPatient from './components/NewPatient'
 
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
 	root: {
 		flexGrow: 1,
+		padding: '0 20px',
 	},
 };
 
@@ -23,6 +25,7 @@ class App extends Component {
         <Appbar />
         <Route path='/main' render={props => <Main />} />
         <Route path='/signup' render={props => <SignUp />} />
+        <Route path='/newpatient' render={props => <NewPatient />} />
       </div>
     );
   }
